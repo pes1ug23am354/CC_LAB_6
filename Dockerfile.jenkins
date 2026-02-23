@@ -1,0 +1,19 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+# Install make, g++, curl (these don't have the blocked dependency)
+RUN apt-get update && apt-get install -y \
+    make \
+    g++ \
+    curl \
+    ca-certificates \
+    && apt-get clean
+
+# Download Docker CLI binary directly (skips the blocked Debian package)
+RUN curl -fsSL https://download.docker.com/linux/static/stable/aarch64/docker-26.1.4.tgz -o docker.tgz \
+    && tar xzf docker.tgz \
+    && mv docker/docker /usr/local/bin/docker \
+    && rm -rf docker docker.tgz
+
+USER jenkins
